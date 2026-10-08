@@ -100,16 +100,21 @@ and failure semantics.
 ## Configuration
 
 `config/vault-tasks.schema.json` is the complete configuration contract.
-`config/vault-tasks.example.json` is a generic example. Important values:
+`config/vault-tasks.example.json` is a generic example. See
+[docs/configuration.md](docs/configuration.md) for every actual default.
+Important archive values:
 
 - `vaultRoot`: required absolute vault path.
 - `statuses`: maps Obsidian checkbox symbols to task states.
 - `scan` and `limits`: traversal and output bounds for query mode.
-- `archive.archiveRoot`: vault-relative archive folder, created automatically.
-- `archive.sourceRoots`: vault-relative folders eligible for archive scanning.
-- `archive.minAgeDays`: minimum age after a root task's terminal date.
+- `archive.archiveRoot`: required vault-relative archive folder; `Archive` in
+  the example is not a built-in default.
+- `archive.sourceRoots`: required vault-relative folders eligible for archive
+  scanning; `Income` in the example is not a built-in default.
+- `archive.minAgeDays`: minimum age after a root task's terminal date;
+  defaults to 30 days.
 - `archive.deleteEmptySourceNotes`: archive the complete note and delete its
-  source copy when no real checklist task remains.
+  source copy when no real checklist task remains; defaults to `false`.
 
 Keep real paths and task data only in `config/vault-tasks.local.json`; it is
 Git-ignored. Never commit it.

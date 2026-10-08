@@ -95,6 +95,12 @@ preview summary to the user or the configured private report channel.
 section. It applies all eligible moves by default. Pass `--dry-run` to produce
 a plan and make no changes.
 
+Archive scope is not guessed: `archiveRoot` and `sourceRoots` are required
+configuration values with no built-in folder defaults. The repository examples
+use `Archive` and `Income`, but an agent must treat those as examples only.
+`minAgeDays` defaults to 30; `deleteEmptySourceNotes` defaults to `false`.
+An agent must not change these configuration values as a side effect of a task.
+
 ```bash
 vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
 ```

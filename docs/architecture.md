@@ -33,5 +33,6 @@ Before changing behavior, read the relevant contract:
 
 - [Query mode](query-mode.md)
 - [Archive mode](archive-mode.md)
+- [Configuration defaults](configuration.md)
 - [Configuration schema](../config/vault-tasks.schema.json)
 - [Agent maintenance rules](../AGENTS.md)

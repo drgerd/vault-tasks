@@ -10,6 +10,11 @@ Archive mode exists only when configuration has an `archive` object. The
 archive root and every source root are vault-relative paths. They must be
 disjoint: a source root cannot be the archive root or contain it.
 
+`archiveRoot` and `sourceRoots` are required: there is no hidden default folder
+or source scope. The shipped examples use `Archive` and `Income`, respectively,
+but those are examples only. `minAgeDays` defaults to 30; see
+[configuration defaults](configuration.md) for the complete table.
+
 Run `archive-done` to apply eligible moves. Add `--dry-run` to generate a plan
 without writing files.
 
@@ -33,7 +38,7 @@ when all of the following are true:
 1. Its status is `DONE` or `CANCELLED` according to `statuses`.
 2. It has a valid matching terminal date: `✅ YYYY-MM-DD` for `DONE`, or
    `❌ YYYY-MM-DD` for `CANCELLED`.
-3. The terminal date is no later than `asOf - minAgeDays`.
+3. The terminal date is no later than `asOf - minAgeDays` (30 days by default).
 
 When an eligible root is moved, every indented descendant line is moved with
 it verbatim. Descendants may be unfinished checklist tasks, ordinary text,
