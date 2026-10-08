@@ -132,6 +132,7 @@ path below the vault. With `deleteEmptySourceNotes: true`, a note with no
 remaining real checklist tasks is copied in full to the archive (including
 prose, headings, and frontmatter) and then deleted from the source. This also
 cleans a source note that was already task-free when the archive command ran.
+Empty parent folders are pruned, but the configured source root itself remains.
 
 Archive application writes the archive destination before changing the source.
 It is not transactional: an interrupted run can leave duplicate archive

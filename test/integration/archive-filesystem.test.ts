@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import path from "node:path";
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { lstat, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 
 import { archiveDone } from "../../src/archive/service.js";
@@ -36,4 +36,19 @@ test("concrete store refuses an archive-root symlink and leaves source intact", 
     assert.equal(result.partial, true);
     assert.match(await readFile(source, "utf8"), /old/u);
   } finally { await rm(root, { recursive: true, force: true }); await rm(outside, { recursive: true, force: true }); }
+});
+
+test("removes empty source subdirectories after deleting a task-free note", async () => {
+  const root = await fixture();
+  try {
+    const month = path.join(root, "Income", "2026", "04");
+    await mkdir(month, { recursive: true });
+    await writeFile(path.join(month, "day.md"), "# Empty day\n");
+    const result = await archiveDone({ ...base, vaultRoot: root, archive: { ...base.archive, deleteEmptySourceNotes: true } });
+    assert.equal(result.deletedSourceNotes, 1);
+    assert.equal(await readFile(path.join(root, "Archive", "Income", "2026", "04", "day.md"), "utf8"), "# Empty day\n");
+    await assert.rejects(lstat(month));
+    await assert.rejects(lstat(path.join(root, "Income", "2026")));
+    assert.equal((await lstat(path.join(root, "Income"))).isDirectory(), true);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

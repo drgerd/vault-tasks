@@ -118,7 +118,8 @@ Important archive values:
   defaults to 30 days.
 - `archive.deleteEmptySourceNotes`: archive the complete note and delete its
   source copy when no real checklist task remains, including a note that was
-  already task-free; defaults to `true`.
+  already task-free; defaults to `true`. Empty child folders are pruned up to
+  the configured source root.
 
 Keep real paths and task data only in `config/vault-tasks.local.json`; it is
 Git-ignored. Never commit it.

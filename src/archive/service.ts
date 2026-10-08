@@ -1,5 +1,5 @@
 import { constants } from "node:fs";
-import { mkdir, open, opendir, lstat, realpath, rename, rm, writeFile } from "node:fs/promises";
+import { mkdir, open, opendir, lstat, realpath, rename, rm, rmdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
@@ -158,6 +158,7 @@ class ArchiveStore implements ArchiveStorePort {
     if (edit.deleteNote) {
       await this.validateExistingParents(edit.path);
       await rm(absolute, { force: false });
+      await this.pruneEmptySourceParents(edit.path);
     } else await this.atomicWrite(absolute, edit.after);
   }
 
@@ -214,6 +215,27 @@ class ArchiveStore implements ArchiveStorePort {
   private async validateExistingParents(relative: string): Promise<void> {
     const parts = safeSegments(relative); parts.pop();
     if (parts.length > 0) await this.existingPath(parts.join("/"), "directory", false);
+  }
+
+  /** Remove empty descendants but never a configured source root itself. */
+  private async pruneEmptySourceParents(relative: string): Promise<void> {
+    const sourceRoot = this.sourceRootFor(relative);
+    if (sourceRoot === undefined) return;
+    const sourceAbsolute = await this.existingPath(sourceRoot, "directory", false);
+    if (sourceAbsolute === undefined) return;
+    let current = path.dirname(path.join(this.root, ...safeSegments(relative)));
+    while (current !== sourceAbsolute) {
+      try { await rmdir(current); }
+      catch { return; }
+      current = path.dirname(current);
+    }
+  }
+
+  private sourceRootFor(relative: string): string | undefined {
+    const segments = safeSegments(relative);
+    return [...this.config.sourceRoots]
+      .filter((sourceRoot) => startsWith(segments, safeSegments(sourceRoot)))
+      .sort((left, right) => right.length - left.length)[0];
   }
 
   private async readNoFollow(absolute: string): Promise<string> {

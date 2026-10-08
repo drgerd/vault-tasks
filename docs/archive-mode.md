@@ -62,6 +62,10 @@ the complete note is copied to the archive and then removed from its configured
 source root. Checklist-looking lines inside fenced code blocks do not prevent
 this cleanup.
 
+After deleting a source note, the tool also removes its empty parent folders up
+to, but never including, the configured `sourceRoot`. It never removes a
+non-empty directory or an archive directory.
+
 With `deleteEmptySourceNotes: false`, the tool removes only eligible task
 blocks from source notes. A source note stays in place.
 
