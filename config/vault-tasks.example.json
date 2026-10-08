@@ -1,0 +1,36 @@
+{
+  "$schema": "./vault-tasks.schema.json",
+  "vaultRoot": "/srv/openclaw-vault",
+  "timezone": "Europe/Warsaw",
+  "vaultName": "my-vault",
+  "statuses": [
+    {"symbol": " ", "name": "Todo", "type": "TODO"},
+    {"symbol": "/", "name": "In Progress", "type": "IN_PROGRESS"},
+    {"symbol": "x", "name": "Done", "type": "DONE"},
+    {"symbol": "-", "name": "Cancelled", "type": "CANCELLED"}
+  ],
+  "scan": {
+    "excludedDirectories": [
+      ".obsidian",
+      ".trash"
+    ],
+    "maxFiles": 10000,
+    "maxFileBytes": 1048576,
+    "maxTotalBytes": 52428800
+  },
+  "limits": {
+    "maxReturnedTasks": 5000,
+    "maxOutputBytes": 2097152,
+    "maxAnyOfClauses": 20,
+    "maxSortFields": 5
+  },
+  "output": {
+    "defaultFormat": "compact"
+  },
+  "archive": {
+    "archiveRoot": "Archive",
+    "sourceRoots": ["Income"],
+    "minAgeDays": 30,
+    "deleteEmptySourceNotes": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "vault-tasks-cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Portable CLI for structured queries over Obsidian Tasks Markdown",
+  "type": "module",
+  "bin": {
+    "vault-tasks": "dist/cli/main.js"
+  },
+  "files": [
+    "dist",
+    "config/vault-tasks.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "check": "npm run typecheck && npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

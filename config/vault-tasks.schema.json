@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "vault-tasks configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["vaultRoot"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional editor hint pointing to this JSON Schema."
+    },
+    "vaultRoot": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Required absolute path to the one vault that this process may scan. The configured root and all scanned entries must pass runtime realpath and symlink checks."
+    },
+    "timezone": {
+      "type": "string",
+      "default": "Europe/Warsaw",
+      "description": "IANA timezone used for today and relative date expressions."
+    },
+    "vaultName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional Obsidian vault name used only to construct obsidian://open URIs. If omitted, URI generation is disabled."
+    },
+    "statuses": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "default": [
+        {"symbol": " ", "name": "Todo", "type": "TODO"},
+        {"symbol": "/", "name": "In Progress", "type": "IN_PROGRESS"},
+        {"symbol": "x", "name": "Done", "type": "DONE"},
+        {"symbol": "-", "name": "Cancelled", "type": "CANCELLED"}
+      ],
+      "description": "Mapping from one-character Markdown checkbox symbols to normalized status names and types. Runtime validation also requires unique symbols.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["symbol", "name", "type"],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "type": {
+            "type": "string",
+            "enum": ["TODO", "IN_PROGRESS", "DONE", "CANCELLED"]
+          }
+        }
+      }
+    },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {},
+      "properties": {
+        "excludedDirectories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "default": [".obsidian", ".trash"],
+          "description": "Vault-relative directory names or paths skipped during scans. Absolute paths and parent traversal are invalid."
+        },
+        "maxFiles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
+          "default": 10000,
+          "description": "Hard failure threshold for the number of filesystem entries considered in one scan."
+        },
+        "maxFileBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 1048576,
+          "description": "Maximum size of one Markdown file. Oversized files are skipped with a warning."
+        },
+        "maxTotalBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 10737418240,
+          "default": 52428800,
+          "description": "Hard failure threshold for total Markdown bytes read in one request."
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {},
+      "properties": {
+        "maxReturnedTasks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 5000,
+          "description": "Maximum task records returned. The scan still computes totalMatches and reports truncation."
+        },
+        "maxOutputBytes": {
+          "type": "integer",
+          "minimum": 16384,
+          "maximum": 104857600,
+          "default": 2097152,
+          "description": "Maximum UTF-8 size of the serialized response. The response remains valid JSON and reports truncation."
+        },
+        "maxAnyOfClauses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Maximum number of non-recursive OR clauses in one query."
+        },
+        "maxSortFields": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 5,
+          "description": "Maximum ordered sort keys in one query."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {},
+      "properties": {
+        "defaultFormat": {
+          "type": "string",
+          "enum": ["compact", "detailed"],
+          "default": "compact",
+          "description": "Format used when --format is omitted."
+        }
+      }
+    },
+    "archive": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional explicit enablement for archive-done write mode. Runtime validation rejects overlapping paths.",
+      "required": ["archiveRoot", "sourceRoots"],
+      "properties": {
+        "archiveRoot": {"type": "string", "minLength": 1},
+        "sourceRoots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "minAgeDays": {"type": "integer", "minimum": 0, "maximum": 36500, "default": 30},
+        "deleteEmptySourceNotes": {"type": "boolean", "default": false}
+      }
+    }
+  }
+}
