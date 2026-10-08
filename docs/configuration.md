@@ -10,7 +10,7 @@ path. All other non-archive settings have the defaults below.
 
 | Setting | Default |
 | --- | --- |
-| `timezone` | `Europe/Warsaw` |
+| `timezone` | `Europe/Warsaw`. It determines the current calendar date for omitted `--as-of` values and relative query dates such as `today` or `+7d`. |
 | `statuses` | `[ ]` TODO, `[/]` IN_PROGRESS, `[x]` DONE, `[-]` CANCELLED |
 | `scan.excludedDirectories` | `.obsidian`, `.trash` |
 | `scan.maxFiles` | `10,000` |
@@ -32,7 +32,7 @@ scope is deliberately explicit:
 | `archive.archiveRoot` | **Required; no built-in default.** `Archive` is the value used in the example files. The directory is created when an archive run needs it. |
 | `archive.sourceRoots` | **Required; no built-in default.** `Income` is an example only. Choose every vault-relative root that may be archived. |
 | `archive.minAgeDays` | `30` days. A root task's matching `✅` or `❌` date must be at least this old. |
-| `archive.deleteEmptySourceNotes` | `false`. When set to `true`, a note with no checklist tasks left is archived whole and then removed from the source tree. |
+| `archive.deleteEmptySourceNotes` | `true`. A note with no checklist tasks left is archived whole and then removed from the source tree. Set it to `false` to retain a source note after eligible blocks are removed. |
 
 `archiveRoot` and `sourceRoots` must be vault-relative, non-overlapping paths.
 The archive root is automatically excluded from query and archive scans. The

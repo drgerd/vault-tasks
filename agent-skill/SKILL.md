@@ -34,6 +34,10 @@ Keep `VAULT_TASKS_CONFIG=...` in the same command as the CLI invocation, or
 export it before invoking the tool. The configuration selects the one allowed
 vault; query JSON never selects a filesystem path.
 
+Unless the configuration overrides it, the timezone is `Europe/Warsaw`. It
+defines the current date used by omitted `--as-of` values and relative dates
+such as `today` or `+7d`.
+
 ## Find and assemble relevant work
 
 Start with `compact` output. It preserves the original Markdown task line and
@@ -98,7 +102,7 @@ a plan and make no changes.
 Archive scope is not guessed: `archiveRoot` and `sourceRoots` are required
 configuration values with no built-in folder defaults. The repository examples
 use `Archive` and `Income`, but an agent must treat those as examples only.
-`minAgeDays` defaults to 30; `deleteEmptySourceNotes` defaults to `false`.
+`minAgeDays` defaults to 30; `deleteEmptySourceNotes` defaults to `true`.
 An agent must not change these configuration values as a side effect of a task.
 
 ```bash

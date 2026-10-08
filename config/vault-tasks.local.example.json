@@ -28,6 +28,6 @@
     "archiveRoot": "Archive",
     "sourceRoots": ["Income"],
     "minAgeDays": 30,
-    "deleteEmptySourceNotes": false
+    "deleteEmptySourceNotes": true
   }
 }

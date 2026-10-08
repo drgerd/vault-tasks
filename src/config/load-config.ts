@@ -175,7 +175,7 @@ export function parseConfig(input: unknown): VaultTasksConfig {
       archiveRoot,
       sourceRoots,
       minAgeDays: "minAgeDays" in value ? integer(value.minAgeDays, "$config.archive.minAgeDays", 0, 36_500) : 30,
-      deleteEmptySourceNotes: value.deleteEmptySourceNotes === true,
+      deleteEmptySourceNotes: value.deleteEmptySourceNotes !== false,
     };
   }
 

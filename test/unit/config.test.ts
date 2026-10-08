@@ -49,7 +49,8 @@ test("parseConfig validates and preserves configurable status symbols", () => {
 
 test("archive configuration is opt-in and rejects overlapping roots", () => {
   const config = parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: ["Income"], minAgeDays: 45 } });
-  assert.deepEqual(config.archive, { archiveRoot: "Archive", sourceRoots: ["Income"], minAgeDays: 45, deleteEmptySourceNotes: false });
+  assert.deepEqual(config.archive, { archiveRoot: "Archive", sourceRoots: ["Income"], minAgeDays: 45, deleteEmptySourceNotes: true });
+  assert.equal(parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: ["Income"], deleteEmptySourceNotes: false } }).archive?.deleteEmptySourceNotes, false);
   assert.equal(parseConfig({ vaultRoot: "/vault" }).archive, undefined);
   assert.throws(() => parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Income/Archive", sourceRoots: ["Income"] } }), /must not overlap/u);
   assert.throws(() => parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: ["Income", "Income/Daily"] } }), /must not overlap/u);

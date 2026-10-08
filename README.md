@@ -105,6 +105,8 @@ and failure semantics.
 Important archive values:
 
 - `vaultRoot`: required absolute vault path.
+- `timezone`: defaults to `Europe/Warsaw`; it determines the calendar date for
+  omitted `--as-of` values and relative dates such as `today`.
 - `statuses`: maps Obsidian checkbox symbols to task states.
 - `scan` and `limits`: traversal and output bounds for query mode.
 - `archive.archiveRoot`: required vault-relative archive folder; `Archive` in
@@ -114,7 +116,7 @@ Important archive values:
 - `archive.minAgeDays`: minimum age after a root task's terminal date;
   defaults to 30 days.
 - `archive.deleteEmptySourceNotes`: archive the complete note and delete its
-  source copy when no real checklist task remains; defaults to `false`.
+  source copy when no real checklist task remains; defaults to `true`.
 
 Keep real paths and task data only in `config/vault-tasks.local.json`; it is
 Git-ignored. Never commit it.

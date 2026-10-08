@@ -51,14 +51,14 @@ whole-note rule below applies.
 
 ## Whole-note archive and source deletion
 
-With `deleteEmptySourceNotes: false` (the default), the tool removes only
-eligible task blocks from source notes. A source note stays in place.
-
-With `deleteEmptySourceNotes: true`, if removing eligible blocks leaves no
+With `deleteEmptySourceNotes: true` (the default), if removing eligible blocks leaves no
 real Markdown checklist task anywhere in the note, the tool instead writes the
 complete original note to the archive and removes the source note. This
 preserves frontmatter, headings, observations, prose, and all other content.
 The result item has `deleteSourceNote: true`.
+
+With `deleteEmptySourceNotes: false`, the tool removes only eligible task
+blocks from source notes. A source note stays in place.
 
 ## Apply order and failures
 

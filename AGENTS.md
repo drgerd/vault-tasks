@@ -22,7 +22,7 @@ user requirement.
 - Archive mode is opt-in through the `archive` config object and applies
   eligible moves by default. `--dry-run` is the only preview-only path.
 - `archiveRoot` and `sourceRoots` are required and have no hidden defaults.
-  `minAgeDays` defaults to 30 and `deleteEmptySourceNotes` defaults to false;
+  `minAgeDays` defaults to 30 and `deleteEmptySourceNotes` defaults to true;
   preserve and document any change to those values.
 - Only a root task's terminal status/date and age decide whether its block is
   eligible. Once eligible, copy all indented descendants verbatim without
