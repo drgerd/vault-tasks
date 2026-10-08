@@ -124,3 +124,12 @@ The automated tests use synthetic fixtures only. Project layout and extension
 guidance are in [docs/architecture.md](docs/architecture.md). The durable
 business rules and coding constraints for future agents are in
 [AGENTS.md](AGENTS.md).
+
+## Agent skill
+
+[`agent-skill/SKILL.md`](agent-skill/SKILL.md) is a self-contained English
+instruction file for an Obsidian-capable agent. Copy that file into the
+agent's skill mechanism and provide the agent with a trusted local
+`VAULT_TASKS_CONFIG` path plus permission to execute the CLI. It covers
+structured task search, relevant to-do summaries, daily planning, archive
+previews, and the explicit authorization required before `archive-done --apply`.
