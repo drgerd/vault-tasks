@@ -1,7 +1,6 @@
 {
   "$schema": "./vault-tasks.schema.json",
   "vaultRoot": "/absolute/path/to/your-vault",
-  "timezone": "Europe/Warsaw",
   "vaultName": "your-vault-name",
   "statuses": [
     {"symbol": " ", "name": "Todo", "type": "TODO"},

@@ -16,8 +16,7 @@
     },
     "timezone": {
       "type": "string",
-      "default": "Europe/Warsaw",
-      "description": "IANA timezone used for today and relative date expressions."
+      "description": "Optional IANA timezone used for today and relative date expressions. When omitted, the CLI detects the local timezone of its host."
     },
     "vaultName": {
       "type": "string",

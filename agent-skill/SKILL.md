@@ -34,9 +34,9 @@ Keep `VAULT_TASKS_CONFIG=...` in the same command as the CLI invocation, or
 export it before invoking the tool. The configuration selects the one allowed
 vault; query JSON never selects a filesystem path.
 
-Unless the configuration overrides it, the timezone is `Europe/Warsaw`. It
-defines the current date used by omitted `--as-of` values and relative dates
-such as `today` or `+7d`.
+Unless the configuration overrides it, the CLI uses the local timezone of the
+machine that runs it. It defines the current date used by omitted `--as-of`
+values and relative dates such as `today` or `+7d`.
 
 ## Find and assemble relevant work
 

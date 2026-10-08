@@ -105,8 +105,9 @@ and failure semantics.
 Important archive values:
 
 - `vaultRoot`: required absolute vault path.
-- `timezone`: defaults to `Europe/Warsaw`; it determines the calendar date for
-  omitted `--as-of` values and relative dates such as `today`.
+- `timezone`: defaults to the local timezone of the machine running the CLI;
+  it determines the calendar date for omitted `--as-of` values and relative
+  dates such as `today`. Set it explicitly only for a fixed-timezone workflow.
 - `statuses`: maps Obsidian checkbox symbols to task states.
 - `scan` and `limits`: traversal and output bounds for query mode.
 - `archive.archiveRoot`: required vault-relative archive folder; `Archive` in

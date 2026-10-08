@@ -3,6 +3,8 @@ import { isAbsolute, normalize, resolve } from "node:path";
 import type { ConfiguredStatusType, OutputFormat } from "../model/index.js";
 
 export const DEFAULT_CONFIG_PATH = "/etc/vault-tasks/config.json";
+/** IANA timezone detected from the host running this CLI. */
+export const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
 export interface StatusConfig {
   symbol: string;
@@ -181,7 +183,7 @@ export function parseConfig(input: unknown): VaultTasksConfig {
 
   const result: VaultTasksConfig = {
     vaultRoot,
-    timezone: "timezone" in root ? timezone(root.timezone, "$config.timezone") : "Europe/Warsaw",
+    timezone: "timezone" in root ? timezone(root.timezone, "$config.timezone") : DEFAULT_TIMEZONE,
     ...(root.vaultName === undefined ? {} : { vaultName: requiredString(root.vaultName, "$config.vaultName") }),
     statuses,
     scan: {

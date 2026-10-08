@@ -3,12 +3,12 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { ConfigValidationError, loadConfig, parseConfig, resolveConfigPath } from "../../src/config/index.js";
+import { ConfigValidationError, DEFAULT_TIMEZONE, loadConfig, parseConfig, resolveConfigPath } from "../../src/config/index.js";
 
 test("parseConfig applies documented immutable defaults", () => {
   const config = parseConfig({ vaultRoot: "/srv/vault" });
   assert.equal(config.vaultRoot, "/srv/vault");
-  assert.equal(config.timezone, "Europe/Warsaw");
+  assert.equal(config.timezone, DEFAULT_TIMEZONE);
   assert.deepEqual(config.scan.excludedDirectories, [".obsidian", ".trash"]);
   assert.equal(config.scan.maxFiles, 10_000);
   assert.equal(config.limits.maxReturnedTasks, 5_000);

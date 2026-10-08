@@ -10,7 +10,7 @@ path. All other non-archive settings have the defaults below.
 
 | Setting | Default |
 | --- | --- |
-| `timezone` | `Europe/Warsaw`. It determines the current calendar date for omitted `--as-of` values and relative query dates such as `today` or `+7d`. |
+| `timezone` | Local IANA timezone detected from the machine running the CLI. It determines the current calendar date for omitted `--as-of` values and relative query dates such as `today` or `+7d`. Set an explicit value only when a fixed timezone is intentional. |
 | `statuses` | `[ ]` TODO, `[/]` IN_PROGRESS, `[x]` DONE, `[-]` CANCELLED |
 | `scan.excludedDirectories` | `.obsidian`, `.trash` |
 | `scan.maxFiles` | `10,000` |

@@ -1,7 +1,6 @@
 {
   "$schema": "./vault-tasks.schema.json",
   "vaultRoot": "/srv/openclaw-vault",
-  "timezone": "Europe/Warsaw",
   "vaultName": "my-vault",
   "statuses": [
     {"symbol": " ", "name": "Todo", "type": "TODO"},
