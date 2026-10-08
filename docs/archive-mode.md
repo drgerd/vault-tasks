@@ -10,15 +10,15 @@ Archive mode exists only when configuration has an `archive` object. The
 archive root and every source root are vault-relative paths. They must be
 disjoint: a source root cannot be the archive root or contain it.
 
-Run without `--apply` to generate a plan. This does not write files. Add
-`--apply` only after reviewing the JSON result.
+Run `archive-done` to apply eligible moves. Add `--dry-run` to generate a plan
+without writing files.
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
+  node dist/cli/main.js archive-done --dry-run --as-of 2026-10-08 | jq
 
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --apply --as-of 2026-10-08 | jq
+  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
 ```
 
 `archiveRoot` is created automatically. Destination paths preserve the source

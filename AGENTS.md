@@ -19,8 +19,8 @@ user requirement.
 
 - Query mode is read-only. Keep vault selection in validated local config, not
   in query JSON.
-- Archive mode is opt-in through the `archive` config object and previews by
-  default. `--apply` is the only write path.
+- Archive mode is opt-in through the `archive` config object and applies
+  eligible moves by default. `--dry-run` is the only preview-only path.
 - Only a root task's terminal status/date and age decide whether its block is
   eligible. Once eligible, copy all indented descendants verbatim without
   evaluating their state or metadata.

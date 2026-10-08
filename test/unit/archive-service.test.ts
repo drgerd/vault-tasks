@@ -43,7 +43,7 @@ test("destination failure leaves source unchanged and source failure reports par
   assert.equal(failedSource.archived, 0); assert.equal(failedSource.partial, true); assert.match(source.archive.get("Archive/Income/day.md") ?? "", /old/u);
   assert.match(source.sources.get("Income/day.md") ?? "", /old/u);
 });
-test("plan-only is byte-identical", async () => {
+test("dry-run plan is byte-identical", async () => {
   const store = new MemoryStore();
   const result = await archiveDone({ ...options, apply: false }, store);
   assert.equal(result.eligible, 1); assert.equal(result.archived, 0); assert.equal(store.archive.size, 0);

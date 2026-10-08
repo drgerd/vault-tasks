@@ -105,4 +105,25 @@ test("archive command is gated by config and query excludes configured archive r
     scan: async (options) => { excluded = options.scan.excludedDirectories; return { tasks: [], filesScanned: 0, bytesRead: 0, warnings: [] }; },
   });
   assert.ok(excluded.includes("Archive"));
+
+  let firstApply: boolean | undefined;
+  let secondApply: boolean | undefined;
+  const archive = async (options: { apply: boolean }) => {
+    if (firstApply === undefined) firstApply = options.apply;
+    else secondApply = options.apply;
+    return {
+      asOf: "2026-10-06", applied: options.apply, considered: 0, eligible: 0,
+      archived: 0, skipped: 0, deletedSourceNotes: 0, warnings: [], errors: [], items: [], partial: false,
+    };
+  };
+  const archiveDependencies = {
+    loadConfig: () => archiveConfig,
+    clock: { now: () => new Date("2026-10-06T22:30:00Z") },
+    scan: async () => ({ tasks: [], filesScanned: 0, bytesRead: 0, warnings: [] }),
+    archive,
+  };
+  await runCli(["archive-done"], io, archiveDependencies);
+  await runCli(["archive-done", "--dry-run"], io, archiveDependencies);
+  assert.equal(firstApply, true);
+  assert.equal(secondApply, false);
 });

@@ -62,7 +62,7 @@ export async function runCli(
     if (command.name === "archive-done") {
       if (config.archive === undefined) throw new ArchiveError("ARCHIVE_NOT_CONFIGURED", "Archive mode requires an archive configuration section");
       const archive = await (dependencies.archive ?? archiveDone)({
-        vaultRoot: config.vaultRoot, archive: config.archive, statuses: config.statuses, asOf, apply: command.apply,
+        vaultRoot: config.vaultRoot, archive: config.archive, statuses: config.statuses, asOf, apply: !command.dryRun,
       });
       io.stdout(`${JSON.stringify(archive)}\n`);
       return archive.partial ? 1 : 0;

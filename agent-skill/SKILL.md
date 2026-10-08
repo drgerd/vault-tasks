@@ -77,10 +77,12 @@ sort by priority and date. Ask before treating an undated task as an active
 commitment.
 
 The CLI itself does not schedule jobs. If the host platform supports schedules,
-it may run an evening **preview** such as:
+it may run an evening archive cleanup only after the user has explicitly
+authorized that recurring mutation. Use a **preview** job when the schedule is
+for reporting only:
 
 ```bash
-vault-tasks archive-done
+vault-tasks archive-done --dry-run
 ```
 
 Use the host's scheduler syntax and timezone settings; do not invent a cron
@@ -90,20 +92,20 @@ preview summary to the user or the configured private report channel.
 ## Archive completed work
 
 `archive-done` is available only when the local configuration has an `archive`
-section. It is safe to run without `--apply`: that produces a plan and changes
-nothing.
+section. It applies all eligible moves by default. Pass `--dry-run` to produce
+a plan and make no changes.
+
+```bash
+vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
+```
+
+Run `archive-done` without `--dry-run` only after the user explicitly approves
+that cleanup, or after the user has granted clear ongoing authorization for the
+named scheduled cleanup. Never treat a general request to "organize tasks" as
+permission to delete or move source content.
 
 ```bash
 vault-tasks archive-done --as-of 2026-10-08 | jq
-```
-
-Run `--apply` only after the user explicitly approves that preview, or after
-the user has granted a clear ongoing authorization for the named scheduled
-cleanup. Never treat a general request to "organize tasks" as permission to
-delete or move source content.
-
-```bash
-vault-tasks archive-done --apply --as-of 2026-10-08 | jq
 ```
 
 Archive eligibility is deliberately simple:

@@ -7,8 +7,8 @@ there is no database, daemon, synchronization service, or background index.
 The tool has two independent modes:
 
 - **Query mode** is read-only and returns recognized Markdown checklist tasks.
-- **Archive mode** is opt-in, previews by default, and moves eligible task
-  blocks into an archive tree only with `--apply`.
+- **Archive mode** is opt-in and moves eligible task blocks into an archive
+  tree by default. Pass `--dry-run` to inspect its plan without writing.
 
 ## Install and build
 
@@ -44,7 +44,7 @@ command unless you use `export VAULT_TASKS_CONFIG=...`.
 vault-tasks query --json '<QUERY_JSON>' [--format compact|detailed] [--as-of YYYY-MM-DD]
 vault-tasks schema
 vault-tasks explain --json '<QUERY_JSON>' [--as-of YYYY-MM-DD]
-vault-tasks archive-done [--apply] [--as-of YYYY-MM-DD]
+vault-tasks archive-done [--dry-run] [--as-of YYYY-MM-DD]
 ```
 
 When running from a checkout before global installation, substitute
@@ -77,14 +77,15 @@ execution path.
 ### Archive mode
 
 Archive mode is enabled only when the local configuration contains an
-`archive` section. Always inspect a preview first:
+`archive` section. It applies eligible moves by default. Use `--dry-run` when
+you want a read-only preview:
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
+  node dist/cli/main.js archive-done --dry-run --as-of 2026-10-08 | jq
 
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --apply --as-of 2026-10-08 | jq
+  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
 ```
 
 The configured `archiveRoot` directory is created automatically. Archive paths
@@ -132,4 +133,4 @@ instruction file for an Obsidian-capable agent. Copy that file into the
 agent's skill mechanism and provide the agent with a trusted local
 `VAULT_TASKS_CONFIG` path plus permission to execute the CLI. It covers
 structured task search, relevant to-do summaries, daily planning, archive
-previews, and the explicit authorization required before `archive-done --apply`.
+previews, and the authorization boundary for a mutating `archive-done` call.

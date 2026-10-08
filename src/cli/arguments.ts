@@ -3,7 +3,7 @@ import type { OutputFormat } from "../model/index.js";
 export type CliCommand =
   | { name: "query"; json: string; format?: OutputFormat; asOf?: string }
   | { name: "explain"; json: string; asOf?: string }
-  | { name: "archive-done"; apply: boolean; asOf?: string }
+  | { name: "archive-done"; dryRun: boolean; asOf?: string }
   | { name: "schema" }
   | { name: "help" };
 
@@ -25,13 +25,13 @@ export function parseArguments(argv: readonly string[]): CliCommand {
     return { name: "schema" };
   }
   if (command === "archive-done") {
-    let apply = false;
+    let dryRun = false;
     let asOf: string | undefined;
     for (let index = 0; index < rest.length; index += 1) {
       const flag = rest[index];
-      if (flag === "--apply") {
-        if (apply) throw new CliArgumentError("--apply may be specified only once");
-        apply = true;
+      if (flag === "--dry-run") {
+        if (dryRun) throw new CliArgumentError("--dry-run may be specified only once");
+        dryRun = true;
         continue;
       }
       if (flag !== "--as-of") throw new CliArgumentError(`unknown option: ${flag ?? ""}`);
@@ -41,7 +41,7 @@ export function parseArguments(argv: readonly string[]): CliCommand {
       asOf = validateIsoDate(value, "--as-of");
       index += 1;
     }
-    return { name: "archive-done", apply, ...(asOf === undefined ? {} : { asOf }) };
+    return { name: "archive-done", dryRun, ...(asOf === undefined ? {} : { asOf }) };
   }
   if (command !== "query" && command !== "explain") {
     throw new CliArgumentError(`unknown command: ${command}`);
@@ -94,8 +94,8 @@ Usage:
   vault-tasks query --json '<QUERY_JSON>' [--format compact|detailed] [--as-of YYYY-MM-DD]
   vault-tasks explain --json '<QUERY_JSON>' [--as-of YYYY-MM-DD]
   vault-tasks schema
-  vault-tasks archive-done [--apply] [--as-of YYYY-MM-DD]
+  vault-tasks archive-done [--dry-run] [--as-of YYYY-MM-DD]
 
 Configuration is loaded from VAULT_TASKS_CONFIG or /etc/vault-tasks/config.json.
 The vault root cannot be supplied in query JSON or CLI arguments.
-archive-done without --apply creates a safe plan only.`;
+archive-done applies eligible moves by default. Use --dry-run to print a plan without writing.`;
