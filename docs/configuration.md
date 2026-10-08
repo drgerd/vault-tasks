@@ -32,7 +32,7 @@ scope is deliberately explicit:
 | `archive.archiveRoot` | **Required; no built-in default.** `Archive` is the value used in the example files. The directory is created when an archive run needs it. |
 | `archive.sourceRoots` | **Required; no built-in default.** `Income` is an example only. Choose every vault-relative root that may be archived. |
 | `archive.minAgeDays` | `30` days. A root task's matching `✅` or `❌` date must be at least this old. |
-| `archive.deleteEmptySourceNotes` | `true`. A note with no checklist tasks left is archived whole and then removed from the source tree. Set it to `false` to retain a source note after eligible blocks are removed. |
+| `archive.deleteEmptySourceNotes` | `true`. A note with no checklist tasks left, including one that was already task-free, is archived whole and then removed from the source tree. Set it to `false` to retain a source note after eligible blocks are removed. |
 
 `archiveRoot` and `sourceRoots` must be vault-relative, non-overlapping paths.
 The archive root is automatically excluded from query and archive scans. The

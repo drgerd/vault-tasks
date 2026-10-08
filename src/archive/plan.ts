@@ -135,6 +135,15 @@ export function planDocument(
   const remove = new Set<number>();
   for (const candidate of candidates) for (let index = candidate.start; index < candidate.end; index += 1) remove.add(index);
   const after = lines.filter((_, index) => !remove.has(index)).join("");
+  if (candidates.length === 0 && deleteEmptySourceNotes && !containsChecklistTask(markdown, statuses, path)) {
+    return {
+      sourceEdits: [{ path, before: markdown, after: markdown, blocks: [], deleteNote: true, archiveWholeNote: true }],
+      considered,
+      eligible: 0,
+      skipped: considered,
+      warnings,
+    };
+  }
   const deleteNote = deleteEmptySourceNotes && !containsChecklistTask(after, statuses, path);
   return {
     sourceEdits: candidates.length === 0 ? [] : [{

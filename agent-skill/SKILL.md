@@ -130,7 +130,8 @@ Archive eligibility is deliberately simple:
 The archive root is created automatically. The destination mirrors the source
 path below the vault. With `deleteEmptySourceNotes: true`, a note with no
 remaining real checklist tasks is copied in full to the archive (including
-prose, headings, and frontmatter) and then deleted from the source.
+prose, headings, and frontmatter) and then deleted from the source. This also
+cleans a source note that was already task-free when the archive command ran.
 
 Archive application writes the archive destination before changing the source.
 It is not transactional: an interrupted run can leave duplicate archive

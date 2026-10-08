@@ -117,7 +117,8 @@ Important archive values:
 - `archive.minAgeDays`: minimum age after a root task's terminal date;
   defaults to 30 days.
 - `archive.deleteEmptySourceNotes`: archive the complete note and delete its
-  source copy when no real checklist task remains; defaults to `true`.
+  source copy when no real checklist task remains, including a note that was
+  already task-free; defaults to `true`.
 
 Keep real paths and task data only in `config/vault-tasks.local.json`; it is
 Git-ignored. Never commit it.

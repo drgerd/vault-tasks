@@ -28,8 +28,8 @@ user requirement.
   eligible. Once eligible, copy all indented descendants verbatim without
   evaluating their state or metadata.
 - With `deleteEmptySourceNotes`, archive the complete original note and delete
-  it only when no real checklist task remains after planning. Preserve prose,
-  headings, frontmatter, and observations.
+  it when no real checklist task remains, including when the note was already
+  task-free. Preserve prose, headings, frontmatter, and observations.
 - Write archive content before changing the source. Duplicate archive content
   after interruption is acceptable; do not add complex transactional behavior.
 

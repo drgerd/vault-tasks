@@ -57,6 +57,11 @@ complete original note to the archive and removes the source note. This
 preserves frontmatter, headings, observations, prose, and all other content.
 The result item has `deleteSourceNote: true`.
 
+The same setting also handles a note that already has no real checklist task:
+the complete note is copied to the archive and then removed from its configured
+source root. Checklist-looking lines inside fenced code blocks do not prevent
+this cleanup.
+
 With `deleteEmptySourceNotes: false`, the tool removes only eligible task
 blocks from source notes. A source note stays in place.
 

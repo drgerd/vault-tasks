@@ -64,6 +64,18 @@ test("does not parse fenced examples and deletes a task-free source note with pr
   assert.equal(retained.sourceEdits[0]?.deleteNote, false);
 });
 
+test("archives and removes a source note that already has no checklist tasks", () => {
+  const markdown = "---\ntemplate: daily\n---\n# A day with no tasks\n";
+  const deleted = planDocument("Income/empty.md", markdown, statuses, "2026-10-06", 30, true);
+  assert.equal(deleted.considered, 0);
+  assert.equal(deleted.eligible, 0);
+  assert.equal(deleted.sourceEdits[0]?.deleteNote, true);
+  assert.equal(deleted.sourceEdits[0]?.archiveWholeNote, true);
+  assert.deepEqual(deleted.sourceEdits[0]?.blocks, []);
+  const retained = planDocument("Income/empty.md", markdown, statuses, "2026-10-06", 30, false);
+  assert.deepEqual(retained.sourceEdits, []);
+});
+
 test("invalid terminal calendar dates are safely skipped", () => {
   const plan = planDocument("Income/day.md", "- [x] impossible ✅ 2026-99-99\n", statuses, "2026-10-06", 30, false);
   assert.equal(plan.eligible, 0);

@@ -60,3 +60,14 @@ test("archives a complete source note verbatim before deleting it", async () => 
   assert.equal(store.sources.has("Income/day.md"), false);
   assert.equal(store.archive.get("Archive/Income/day.md"), "Observation\n# Day\n- [x] old ✅ 2026-01-01\n");
 });
+
+test("archives a task-free source note before deleting it", async () => {
+  const store = new MemoryStore();
+  store.sources.set("Income/day.md", "---\ntemplate: daily\n---\n# Empty\n");
+  const result = await archiveDone({ ...options, archive: { ...options.archive, deleteEmptySourceNotes: true } }, store);
+  assert.equal(result.eligible, 0);
+  assert.equal(result.deletedSourceNotes, 1);
+  assert.equal(result.items[0]?.deleteSourceNote, true);
+  assert.equal(store.sources.has("Income/day.md"), false);
+  assert.equal(store.archive.get("Archive/Income/day.md"), "---\ntemplate: daily\n---\n# Empty\n");
+});
