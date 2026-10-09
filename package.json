@@ -29,6 +29,7 @@
     "config/vault-tasks.local.example.json",
     "docs",
     "agent-skill",
+    "AGENTS.md",
     "README.md",
     "LICENSE"
   ],

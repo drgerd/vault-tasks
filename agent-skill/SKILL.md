@@ -5,10 +5,13 @@ description: Find, prioritize, summarize, and safely archive completed Obsidian 
 
 # Obsidian Vault Tasks
 
-Use `vault-tasks-cli` as the structured interface to a configured Obsidian
-vault. It recognizes Markdown checklist tasks and returns their source path,
-line, original Markdown, and (when requested) parsed metadata. Do not search
-or modify arbitrary vault files directly when this tool can answer the request.
+Use the public npm CLI
+[`@gerd/vault-tasks`](https://www.npmjs.com/package/@gerd/vault-tasks) as the
+structured interface to a configured Obsidian vault. Invoke it as
+`npx --yes @gerd/vault-tasks ...`. It recognizes Markdown checklist tasks and
+returns their source path, line, original Markdown, and (when requested)
+parsed metadata. Do not search or modify arbitrary vault files directly when
+this tool can answer the request.
 
 ## Configure the command once
 
@@ -16,18 +19,11 @@ The hosting agent must provide a trusted local configuration path. Never ask
 the end user for a vault path in a task query, and never include a real path,
 task text, or command output in persistent public logs.
 
-Use the installed command when available:
+For queries, use a trusted configuration path supplied by the host:
 
 ```bash
 VAULT_TASKS_CONFIG="/trusted/path/vault-tasks.local.json" \
-  vault-tasks query --json '{}'
-```
-
-For a checkout that has not been installed, use its built executable:
-
-```bash
-VAULT_TASKS_CONFIG="/trusted/path/vault-tasks.local.json" \
-  node /trusted/path/vault-tasks/dist/cli/main.js query --json '{}'
+  npx --yes @gerd/vault-tasks query --json '{}'
 ```
 
 Keep `VAULT_TASKS_CONFIG=...` in the same command as the CLI invocation, or
@@ -45,7 +41,8 @@ is sufficient for listings, summaries, and locating a task. Request `detailed`
 only for reliable metadata, date, recurrence, or dependency analysis.
 
 ```bash
-vault-tasks query --format compact --json '{
+VAULT_TASKS_CONFIG="/trusted/path/vault-tasks.local.json" \
+  npx --yes @gerd/vault-tasks query --format compact --json '{
   "status": {"anyOf": ["TODO", "IN_PROGRESS"]},
   "scheduled": {"from": "today", "to": "+7d"},
   "sort": [{"field": "priority", "direction": "desc"}]
@@ -65,9 +62,9 @@ Use structured filters rather than guessing from prose:
 
 Date values can be ISO dates, `today`, `yesterday`, `tomorrow`, `-30d`, or
 `+7d`. Use `--as-of YYYY-MM-DD` when a repeatable date boundary matters.
-Consult `vault-tasks schema` when constructing an unfamiliar query and
-`vault-tasks explain --json '...'` when validating a query without scanning
-the vault.
+Consult `npx --yes @gerd/vault-tasks schema` when constructing an unfamiliar
+query. To validate a query without scanning task content, use
+`VAULT_TASKS_CONFIG="/trusted/path/vault-tasks.local.json" npx --yes @gerd/vault-tasks explain --json '...'`.
 
 When reporting tasks, preserve `path` and `line` with each selected item. Say
 when results are truncated or when a query returned no matches; do not invent
@@ -86,7 +83,7 @@ authorized that recurring mutation. Use a **preview** job when the schedule is
 for reporting only:
 
 ```bash
-vault-tasks archive-done --dry-run
+npx --yes @gerd/vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run
 ```
 
 Use the host's scheduler syntax and timezone settings; do not invent a cron
@@ -106,7 +103,7 @@ With configuration, `archiveRoot` and `sourceRoots` are explicit values. With
 scope. An agent must not change these values as a side effect of a task.
 
 ```bash
-vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run --as-of 2026-10-08 | jq
+npx --yes @gerd/vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run --as-of 2026-10-08 | jq
 ```
 
 Run `archive-done` without `--dry-run` only after the user explicitly approves
@@ -115,7 +112,7 @@ named scheduled cleanup. Never treat a general request to "organize tasks" as
 permission to delete or move source content.
 
 ```bash
-vault-tasks archive-done --vault-root "/absolute/path/to/vault" --as-of 2026-10-08 | jq
+npx --yes @gerd/vault-tasks archive-done --vault-root "/absolute/path/to/vault" --as-of 2026-10-08 | jq
 ```
 
 Archive eligibility is deliberately simple:

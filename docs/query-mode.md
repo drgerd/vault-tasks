@@ -6,7 +6,7 @@ to stdout.
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js query --format compact \
+  npx --yes @gerd/vault-tasks query --format compact \
   --json '{"status":{"anyOf":["TODO","IN_PROGRESS"]}}'
 ```
 
@@ -14,10 +14,10 @@ Use `schema` to print the complete public query schema and `explain` to
 validate and normalize a query without reading vault task content.
 
 ```bash
-node dist/cli/main.js schema
+npx --yes @gerd/vault-tasks schema
 
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js explain \
+  npx --yes @gerd/vault-tasks explain \
   --json '{"scheduled":{"from":"today","to":"+7d"}}'
 ```
 

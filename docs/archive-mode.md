@@ -23,10 +23,10 @@ without writing files.
 npx --yes @gerd/vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run | jq
 
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --dry-run --as-of 2026-10-08 | jq
+  npx --yes @gerd/vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
 
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
+  npx --yes @gerd/vault-tasks archive-done --as-of 2026-10-08 | jq
 ```
 
 `archiveRoot` is created automatically. Destination paths preserve the source

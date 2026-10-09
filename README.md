@@ -10,16 +10,10 @@ The tool has two independent modes:
 - **Archive mode** is opt-in and moves eligible task blocks into an archive
   tree by default. Pass `--dry-run` to inspect its plan without writing.
 
-## Install from npm
+## Run from npm
 
-After the first public release, install the CLI globally:
-
-```bash
-npm install --global @gerd/vault-tasks
-vault-tasks schema
-```
-
-Or run it without a global installation:
+The public package is [`@gerd/vault-tasks`](https://www.npmjs.com/package/@gerd/vault-tasks).
+Run it without installing anything globally:
 
 ```bash
 npx --yes @gerd/vault-tasks schema
@@ -50,7 +44,7 @@ Keep the configuration variable and command in the **same shell command**:
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js schema
+  npx --yes @gerd/vault-tasks schema
 ```
 
 Exporting the variable on its own line does not make it available to a later
@@ -59,20 +53,20 @@ command unless you use `export VAULT_TASKS_CONFIG=...`.
 ## Commands
 
 ```text
-vault-tasks query --json '<QUERY_JSON>' [--format compact|detailed] [--as-of YYYY-MM-DD]
-vault-tasks schema
-vault-tasks explain --json '<QUERY_JSON>' [--as-of YYYY-MM-DD]
-vault-tasks archive-done [--vault-root PATH] [--archive-root PATH] [--source-root PATH]... [--min-age-days DAYS] [--timezone IANA_ZONE] [--keep-source-notes] [--dry-run] [--as-of YYYY-MM-DD]
+npx --yes @gerd/vault-tasks query --json '<QUERY_JSON>' [--format compact|detailed] [--as-of YYYY-MM-DD]
+npx --yes @gerd/vault-tasks schema
+npx --yes @gerd/vault-tasks explain --json '<QUERY_JSON>' [--as-of YYYY-MM-DD]
+npx --yes @gerd/vault-tasks archive-done [--vault-root PATH] [--archive-root PATH] [--source-root PATH]... [--min-age-days DAYS] [--timezone IANA_ZONE] [--keep-source-notes] [--dry-run] [--as-of YYYY-MM-DD]
 ```
 
-When running from a checkout before global installation, substitute
-`node dist/cli/main.js` for `vault-tasks`.
+For local package development only, build first and substitute
+`node dist/cli/main.js` for the `npx --yes @gerd/vault-tasks` prefix.
 
 ### Query mode
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js query --format compact \
+  npx --yes @gerd/vault-tasks query --format compact \
   --json '{"status":{"anyOf":["TODO","IN_PROGRESS"]}}'
 ```
 
@@ -86,7 +80,7 @@ For a readable terminal result, pipe the JSON through `jq`. On macOS, add
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js query --json '{}' | jq | pbcopy
+  npx --yes @gerd/vault-tasks query --json '{}' | jq | pbcopy
 ```
 
 See [docs/query-mode.md](docs/query-mode.md) for the query language and
@@ -94,9 +88,9 @@ execution path.
 
 ### Archive mode
 
-Archive mode is enabled only when the local configuration contains an
-`archive` section. It applies eligible moves by default. Use `--dry-run` when
-you want a read-only preview:
+Archive mode uses either a local `archive` configuration section or direct
+`--vault-root`. It applies eligible moves by default. Use `--dry-run` when you
+want a read-only preview:
 
 Run directly, without creating a configuration file:
 
@@ -115,7 +109,7 @@ Alternatively, retain a reusable configuration file:
 
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
+  npx --yes @gerd/vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
 ```
 
 The configured `archiveRoot` directory is created automatically. Archive paths
@@ -165,13 +159,15 @@ npm run build
 The automated tests use synthetic fixtures only. Project layout and extension
 guidance are in [docs/architecture.md](docs/architecture.md). The durable
 business rules and coding constraints for future agents are in
-[AGENTS.md](AGENTS.md).
+[AGENTS.md](AGENTS.md); the release and cross-documentation checklist is in
+[docs/maintainer-guide.md](docs/maintainer-guide.md).
 
 ## Agent skill
 
 [`agent-skill/SKILL.md`](agent-skill/SKILL.md) is a self-contained English
 instruction file for an Obsidian-capable agent. Copy that file into the
-agent's skill mechanism and provide the agent with a trusted local
-`VAULT_TASKS_CONFIG` path plus permission to execute the CLI. It covers
+agent's skill mechanism and provide the agent with permission to use the npm
+CLI and either a trusted local `VAULT_TASKS_CONFIG` path (queries) or an
+explicit vault path (direct archive mode). It covers
 structured task search, relevant to-do summaries, daily planning, archive
 previews, and the authorization boundary for a mutating `archive-done` call.
