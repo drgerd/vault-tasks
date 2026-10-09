@@ -1,8 +1,23 @@
 {
-  "name": "vault-tasks-cli",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@gerd/vault-tasks",
+  "version": "0.1.0",
+  "private": false,
   "description": "Portable CLI for structured queries over Obsidian Tasks Markdown",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drgerd/vault-tasks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/drgerd/vault-tasks/issues"
+  },
+  "homepage": "https://github.com/drgerd/vault-tasks#readme",
+  "keywords": [
+    "obsidian",
+    "tasks",
+    "cli",
+    "markdown"
+  ],
   "type": "module",
   "bin": {
     "vault-tasks": "dist/cli/main.js"
@@ -10,14 +25,23 @@
   "files": [
     "dist",
     "config/vault-tasks.schema.json",
+    "config/vault-tasks.example.json",
+    "config/vault-tasks.local.example.json",
+    "docs",
+    "agent-skill",
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test test/**/*.test.ts",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run check"
   },
   "engines": {
     "node": ">=22"

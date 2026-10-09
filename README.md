@@ -10,6 +10,24 @@ The tool has two independent modes:
 - **Archive mode** is opt-in and moves eligible task blocks into an archive
   tree by default. Pass `--dry-run` to inspect its plan without writing.
 
+## Install from npm
+
+After the first public release, install the CLI globally:
+
+```bash
+npm install --global @gerd/vault-tasks
+vault-tasks schema
+```
+
+Or run it without a global installation:
+
+```bash
+npx --yes @gerd/vault-tasks schema
+```
+
+The CLI still needs a local configuration file that names the vault it is
+allowed to access. See [Configuration](#configuration).
+
 ## Install and build
 
 Node.js 22 or newer is required.
