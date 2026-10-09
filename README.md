@@ -25,8 +25,8 @@ Or run it without a global installation:
 npx --yes @gerd/vault-tasks schema
 ```
 
-The CLI still needs a local configuration file that names the vault it is
-allowed to access. See [Configuration](#configuration).
+Queries need a local configuration file. `archive-done` can instead receive a
+vault path directly; see [Archive completed tasks](#archive-completed-tasks).
 
 ## Install and build
 
@@ -62,7 +62,7 @@ command unless you use `export VAULT_TASKS_CONFIG=...`.
 vault-tasks query --json '<QUERY_JSON>' [--format compact|detailed] [--as-of YYYY-MM-DD]
 vault-tasks schema
 vault-tasks explain --json '<QUERY_JSON>' [--as-of YYYY-MM-DD]
-vault-tasks archive-done [--dry-run] [--as-of YYYY-MM-DD]
+vault-tasks archive-done [--vault-root PATH] [--archive-root PATH] [--source-root PATH]... [--min-age-days DAYS] [--timezone IANA_ZONE] [--keep-source-notes] [--dry-run] [--as-of YYYY-MM-DD]
 ```
 
 When running from a checkout before global installation, substitute
@@ -98,12 +98,24 @@ Archive mode is enabled only when the local configuration contains an
 `archive` section. It applies eligible moves by default. Use `--dry-run` when
 you want a read-only preview:
 
+Run directly, without creating a configuration file:
+
+```bash
+npx --yes @gerd/vault-tasks archive-done \
+  --vault-root "/absolute/path/to/your-vault" --dry-run | jq
+```
+
+This scans the whole vault except `Archive`, archives into `Archive`, waits 30
+days after completion, and deletes source notes once they contain no checklist
+tasks. Omit `--dry-run` to apply the plan. Optional flags customize the direct
+mode: `--archive-root`, repeated `--source-root`, `--min-age-days`,
+`--timezone`, and `--keep-source-notes`.
+
+Alternatively, retain a reusable configuration file:
+
 ```bash
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --dry-run --as-of 2026-10-08 | jq
-
-VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
-  node dist/cli/main.js archive-done --as-of 2026-10-08 | jq
+  vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
 ```
 
 The configured `archiveRoot` directory is created automatically. Archive paths
@@ -128,10 +140,11 @@ Important archive values:
   dates such as `today`. Set it explicitly only for a fixed-timezone workflow.
 - `statuses`: maps Obsidian checkbox symbols to task states.
 - `scan` and `limits`: traversal and output bounds for query mode.
-- `archive.archiveRoot`: required vault-relative archive folder; `Archive` in
-  the example is not a built-in default.
-- `archive.sourceRoots`: required vault-relative folders eligible for archive
-  scanning; `Income` in the example is not a built-in default.
+- `archive.archiveRoot`: required vault-relative archive folder in file
+  configuration. Direct `--vault-root` mode defaults it to `Archive`.
+- `archive.sourceRoots`: required vault-relative folders in file configuration.
+  Direct mode scans the whole vault except its archive folder; `["."]` has the
+  same meaning in a config file.
 - `archive.minAgeDays`: minimum age after a root task's terminal date;
   defaults to 30 days.
 - `archive.deleteEmptySourceNotes`: archive the complete note and delete its

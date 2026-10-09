@@ -1,6 +1,6 @@
 {
   "name": "@gerd/vault-tasks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Portable CLI for structured queries over Obsidian Tasks Markdown",
   "license": "MIT",

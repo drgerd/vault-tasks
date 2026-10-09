@@ -2,8 +2,9 @@
 
 The CLI loads one JSON configuration file. It uses the path in
 `VAULT_TASKS_CONFIG`; when that variable is absent, it reads
-`/etc/vault-tasks/config.json`. The CLI has no `--config` or `--vault-root`
-flag. This keeps vault selection outside query JSON and command arguments.
+`/etc/vault-tasks/config.json`. Query and explain commands use this file.
+`archive-done --vault-root PATH` is a self-contained alternative for a simple
+archive run and does not read a configuration file.
 
 `vaultRoot` is the only required top-level setting. It must be an absolute
 path. All other non-archive settings have the defaults below.
@@ -29,11 +30,13 @@ scope is deliberately explicit:
 
 | Setting | Default / requirement |
 | --- | --- |
-| `archive.archiveRoot` | **Required; no built-in default.** `Archive` is the value used in the example files. The directory is created when an archive run needs it. |
-| `archive.sourceRoots` | **Required; no built-in default.** `Income` is an example only. Choose every vault-relative root that may be archived. |
+| `archive.archiveRoot` | **Required in a configuration file; no file-config default.** The direct `--vault-root` mode defaults it to `Archive`. The directory is created when an archive run needs it. |
+| `archive.sourceRoots` | **Required in a configuration file; no file-config default.** Use `["."]` to scan the whole vault except the archive root. Direct `--vault-root` mode uses this scope by default. |
 | `archive.minAgeDays` | `30` days. A root task's matching `✅` or `❌` date must be at least this old. |
 | `archive.deleteEmptySourceNotes` | `true`. A note with no checklist tasks left, including one that was already task-free, is archived whole and then removed from the source tree. Set it to `false` to retain a source note after eligible blocks are removed. |
 
-`archiveRoot` and `sourceRoots` must be vault-relative, non-overlapping paths.
-The archive root is automatically excluded from query and archive scans. The
-example configuration is a starting point, not a source of implicit defaults.
+`archiveRoot` and `sourceRoots` must be vault-relative, non-overlapping paths,
+except `["."]` is allowed as the whole-vault source scope and automatically
+excludes the archive root. The archive root is automatically excluded from
+query and archive scans. The example configuration is a starting point, not a
+source of implicit defaults.

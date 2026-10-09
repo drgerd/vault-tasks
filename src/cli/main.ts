@@ -1,7 +1,8 @@
 #!/usr/bin/env node
+import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
-import { ConfigValidationError, loadConfig, type VaultTasksConfig } from "../config/index.js";
+import { ConfigValidationError, loadConfig, parseConfig, type VaultTasksConfig } from "../config/index.js";
 import {
   QUERY_SCHEMA,
   QueryValidationError,
@@ -57,7 +58,9 @@ export async function runCli(
       return 0;
     }
 
-    const config = dependencies.loadConfig();
+    const config = command.name === "archive-done" && command.vaultRoot !== undefined
+      ? configFromArchiveArguments(command)
+      : dependencies.loadConfig();
     const asOf = command.asOf ?? currentDateInZone(dependencies.clock.now(), config.timezone);
     if (command.name === "archive-done") {
       if (config.archive === undefined) throw new ArchiveError("ARCHIVE_NOT_CONFIGURED", "Archive mode requires an archive configuration section");
@@ -102,6 +105,20 @@ export async function runCli(
     io.stderr(`${JSON.stringify({ error: failure })}\n`);
     return failure.code === "INTERNAL_ERROR" ? 1 : 2;
   }
+}
+
+function configFromArchiveArguments(command: Extract<ReturnType<typeof parseArguments>, { name: "archive-done" }>): VaultTasksConfig {
+  if (command.vaultRoot === undefined) throw new Error("--vault-root is required for direct archive configuration");
+  return parseConfig({
+    vaultRoot: command.vaultRoot,
+    ...(command.timezone === undefined ? {} : { timezone: command.timezone }),
+    archive: {
+      archiveRoot: command.archiveRoot ?? "Archive",
+      sourceRoots: command.sourceRoots.length === 0 ? ["."] : command.sourceRoots,
+      minAgeDays: command.minAgeDays ?? 30,
+      deleteEmptySourceNotes: command.deleteEmptySourceNotes ?? true,
+    },
+  });
 }
 
 function validateResolvedDates(query: VaultTaskQuery, asOf: string): void {
@@ -200,6 +217,12 @@ function serializeError(error: unknown): { code: string; message: string; path?:
 }
 
 const invokedPath = process.argv[1];
-if (invokedPath !== undefined && import.meta.url === pathToFileURL(invokedPath).href) {
+const resolvedInvokedPath = invokedPath === undefined ? undefined : resolveEntrypointPath(invokedPath);
+if (resolvedInvokedPath !== undefined && import.meta.url === pathToFileURL(resolvedInvokedPath).href) {
   process.exitCode = await runCli(process.argv.slice(2));
+}
+
+function resolveEntrypointPath(invokedPath: string): string {
+  try { return realpathSync(invokedPath); }
+  catch { return invokedPath; }
 }

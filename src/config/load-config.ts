@@ -95,6 +95,10 @@ function excludedPath(value: unknown, path: string): string {
   if (item.split("/").some((part) => part === "" || part === "." || part === "..")) throw new ConfigValidationError(path, "must not contain empty, dot, or parent segments");
   return item;
 }
+function sourceRootPath(value: unknown, path: string): string {
+  const item = requiredString(value, path).replaceAll("\\", "/");
+  return item === "." ? item : excludedPath(item, path);
+}
 function deepFreeze<T>(value: T): Readonly<T> {
   if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
     Object.freeze(value);
@@ -156,16 +160,16 @@ export function parseConfig(input: unknown): VaultTasksConfig {
     if (!("sourceRoots" in value)) throw new ConfigValidationError("$config.archive.sourceRoots", "is required");
     const archiveRoot = excludedPath(value.archiveRoot, "$config.archive.archiveRoot");
     if (!Array.isArray(value.sourceRoots) || value.sourceRoots.length === 0) throw new ConfigValidationError("$config.archive.sourceRoots", "must contain at least one path");
-    const sourceRoots = value.sourceRoots.map((item, index) => excludedPath(item, `$config.archive.sourceRoots[${index}]`));
+    const sourceRoots = value.sourceRoots.map((item, index) => sourceRootPath(item, `$config.archive.sourceRoots[${index}]`));
     if (new Set(sourceRoots).size !== sourceRoots.length) throw new ConfigValidationError("$config.archive.sourceRoots", "must not contain duplicates");
     for (const sourceRoot of sourceRoots) {
-      if (overlapsPath(archiveRoot, sourceRoot)) {
+      if (sourceRoot !== "." && overlapsPath(archiveRoot, sourceRoot)) {
         throw new ConfigValidationError("$config.archive", "archiveRoot and sourceRoots must not overlap");
       }
     }
     for (let index = 0; index < sourceRoots.length; index += 1) {
       for (let other = index + 1; other < sourceRoots.length; other += 1) {
-        if (overlapsPath(sourceRoots[index] ?? "", sourceRoots[other] ?? "")) {
+        if (sourceRoots[index] === "." || sourceRoots[other] === "." || overlapsPath(sourceRoots[index] ?? "", sourceRoots[other] ?? "")) {
           throw new ConfigValidationError("$config.archive.sourceRoots", "sourceRoots must not overlap");
         }
       }

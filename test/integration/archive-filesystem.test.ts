@@ -52,3 +52,19 @@ test("removes empty source subdirectories after deleting a task-free note", asyn
     assert.equal((await lstat(path.join(root, "Income"))).isDirectory(), true);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+test("whole-vault source root skips Archive and prunes only source directories", async () => {
+  const root = await fixture();
+  try {
+    await mkdir(path.join(root, "Income", "2026"), { recursive: true });
+    await mkdir(path.join(root, "Archive"), { recursive: true });
+    await writeFile(path.join(root, "Income", "2026", "day.md"), "# Empty day\n");
+    await writeFile(path.join(root, "Archive", "existing.md"), "# Existing archive\n");
+    const result = await archiveDone({ ...base, vaultRoot: root, archive: { ...base.archive, sourceRoots: ["."], deleteEmptySourceNotes: true } });
+    assert.equal(result.deletedSourceNotes, 1);
+    assert.equal(await readFile(path.join(root, "Archive", "Income", "2026", "day.md"), "utf8"), "# Empty day\n");
+    assert.equal(await readFile(path.join(root, "Archive", "existing.md"), "utf8"), "# Existing archive\n");
+    await assert.rejects(lstat(path.join(root, "Income")));
+    assert.equal((await lstat(path.join(root, "Archive"))).isDirectory(), true);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

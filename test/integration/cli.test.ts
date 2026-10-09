@@ -127,3 +127,24 @@ test("archive command is gated by config and query excludes configured archive r
   assert.equal(firstApply, true);
   assert.equal(secondApply, false);
 });
+
+test("archive-done --vault-root uses self-contained archive defaults without loading configuration", async () => {
+  let loaded = false;
+  let received: { vaultRoot: string; archiveRoot: string; sourceRoots: readonly string[]; minAgeDays: number; deleteEmptySourceNotes: boolean } | undefined;
+  const archive = async (options: { vaultRoot: string; archive: { archiveRoot: string; sourceRoots: readonly string[]; minAgeDays: number; deleteEmptySourceNotes: boolean }; apply: boolean }) => {
+    received = { vaultRoot: options.vaultRoot, ...options.archive };
+    return {
+      asOf: "2026-10-06", applied: options.apply, considered: 0, eligible: 0,
+      archived: 0, skipped: 0, deletedSourceNotes: 0, warnings: [], errors: [], items: [], partial: false,
+    };
+  };
+  const exit = await runCli(["archive-done", "--vault-root", "/fixture", "--dry-run"], { stdout: () => undefined, stderr: () => undefined }, {
+    loadConfig: () => { loaded = true; throw new Error("not expected"); },
+    clock: { now: () => new Date("2026-10-06T22:30:00Z") },
+    scan: async () => ({ tasks: [], filesScanned: 0, bytesRead: 0, warnings: [] }),
+    archive,
+  });
+  assert.equal(exit, 0);
+  assert.equal(loaded, false);
+  assert.deepEqual(received, { vaultRoot: "/fixture", archiveRoot: "Archive", sourceRoots: ["."], minAgeDays: 30, deleteEmptySourceNotes: true });
+});

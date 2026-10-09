@@ -6,19 +6,22 @@ workflow rather than a synchronization system.
 
 ## Enable and run
 
-Archive mode exists only when configuration has an `archive` object. The
-archive root and every source root are vault-relative paths. They must be
-disjoint: a source root cannot be the archive root or contain it.
+Archive mode uses either an `archive` object in configuration or the direct
+`--vault-root PATH` command. The archive root and every source root are
+vault-relative paths. They must be disjoint, except that source root `.` means
+the whole vault and automatically excludes the archive root.
 
-`archiveRoot` and `sourceRoots` are required: there is no hidden default folder
-or source scope. The shipped examples use `Archive` and `Income`, respectively,
-but those are examples only. `minAgeDays` defaults to 30; see
+In configuration, `archiveRoot` and `sourceRoots` are required. The direct
+mode defaults to `Archive` and source root `.`, respectively, so it scans the
+whole vault apart from `Archive`. `minAgeDays` defaults to 30; see
 [configuration defaults](configuration.md) for the complete table.
 
 Run `archive-done` to apply eligible moves. Add `--dry-run` to generate a plan
 without writing files.
 
 ```bash
+npx --yes @gerd/vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run | jq
+
 VAULT_TASKS_CONFIG="$PWD/config/vault-tasks.local.json" \
   node dist/cli/main.js archive-done --dry-run --as-of 2026-10-08 | jq
 

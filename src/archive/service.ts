@@ -168,7 +168,8 @@ class ArchiveStore implements ArchiveStorePort {
     const directory = await opendir(absolute);
     try {
       for await (const entry of directory) {
-        const child = `${relative}/${entry.name}`;
+        const child = relative === "." ? entry.name : `${relative}/${entry.name}`;
+        if (this.isArchivePath(child)) continue;
         if (entry.isSymbolicLink()) continue;
         if (entry.isDirectory()) { await this.walk(child, output); continue; }
         if (!entry.isFile() || path.extname(entry.name).toLowerCase() !== ".md") continue;
@@ -198,6 +199,7 @@ class ArchiveStore implements ArchiveStorePort {
   }
 
   private async existingPath(relative: string, expected: "file" | "directory", optional: boolean): Promise<string | undefined> {
+    if (relative === "." && expected === "directory") return this.root;
     const segments = safeSegments(relative);
     let current = this.root;
     for (let index = 0; index < segments.length; index += 1) {
@@ -234,8 +236,14 @@ class ArchiveStore implements ArchiveStorePort {
   private sourceRootFor(relative: string): string | undefined {
     const segments = safeSegments(relative);
     return [...this.config.sourceRoots]
-      .filter((sourceRoot) => startsWith(segments, safeSegments(sourceRoot)))
-      .sort((left, right) => right.length - left.length)[0];
+      .filter((sourceRoot) => startsWith(segments, sourceRoot === "." ? [] : safeSegments(sourceRoot)))
+      .sort((left, right) => sourceRootLength(right) - sourceRootLength(left))[0];
+  }
+
+  private isArchivePath(relative: string): boolean {
+    return relative === this.config.archiveRoot
+      || relative.startsWith(`${this.config.archiveRoot}/`)
+      || this.config.archiveRoot.startsWith(`${relative}/`);
   }
 
   private async readNoFollow(absolute: string): Promise<string> {
@@ -288,6 +296,7 @@ function safeSegments(relative: string): string[] {
 }
 function within(root: string, candidate: string): boolean { const relative = path.relative(root, candidate); return relative === "" || (!relative.startsWith(`..${path.sep}`) && relative !== ".." && !path.isAbsolute(relative)); }
 function startsWith(value: readonly string[], prefix: readonly string[]): boolean { return prefix.every((segment, index) => value[index] === segment); }
+function sourceRootLength(sourceRoot: string): number { return sourceRoot === "." ? 0 : safeSegments(sourceRoot).length; }
 
 function mergeBlock(note: string, block: ArchiveBlock): string {
   const lines = splitLines(note);

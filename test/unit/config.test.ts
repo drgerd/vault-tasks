@@ -54,6 +54,8 @@ test("archive configuration is opt-in and rejects overlapping roots", () => {
   assert.equal(parseConfig({ vaultRoot: "/vault" }).archive, undefined);
   assert.throws(() => parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Income/Archive", sourceRoots: ["Income"] } }), /must not overlap/u);
   assert.throws(() => parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: ["Income", "Income/Daily"] } }), /must not overlap/u);
+  assert.deepEqual(parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: ["."] } }).archive?.sourceRoots, ["."]);
+  assert.throws(() => parseConfig({ vaultRoot: "/vault", archive: { archiveRoot: "Archive", sourceRoots: [".", "Income"] } }), /must not overlap/u);
 });
 
 test("loadConfig path precedence is explicit, environment, then default", () => {

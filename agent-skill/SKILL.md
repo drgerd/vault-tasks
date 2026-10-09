@@ -95,18 +95,18 @@ preview summary to the user or the configured private report channel.
 
 ## Archive completed work
 
-`archive-done` is available only when the local configuration has an `archive`
-section. It applies all eligible moves by default. Pass `--dry-run` to produce
-a plan and make no changes.
+`archive-done` can use a local configuration or `--vault-root PATH` directly.
+It applies all eligible moves by default. Pass `--dry-run` to produce a plan
+and make no changes.
 
-Archive scope is not guessed: `archiveRoot` and `sourceRoots` are required
-configuration values with no built-in folder defaults. The repository examples
-use `Archive` and `Income`, but an agent must treat those as examples only.
-`minAgeDays` defaults to 30; `deleteEmptySourceNotes` defaults to `true`.
-An agent must not change these configuration values as a side effect of a task.
+With configuration, `archiveRoot` and `sourceRoots` are explicit values. With
+`--vault-root`, defaults are `Archive`, whole-vault source scope (excluding
+`Archive`), 30 days, the host's local timezone, and
+`deleteEmptySourceNotes: true`. Use repeated `--source-root` to narrow direct
+scope. An agent must not change these values as a side effect of a task.
 
 ```bash
-vault-tasks archive-done --dry-run --as-of 2026-10-08 | jq
+vault-tasks archive-done --vault-root "/absolute/path/to/vault" --dry-run --as-of 2026-10-08 | jq
 ```
 
 Run `archive-done` without `--dry-run` only after the user explicitly approves
@@ -115,7 +115,7 @@ named scheduled cleanup. Never treat a general request to "organize tasks" as
 permission to delete or move source content.
 
 ```bash
-vault-tasks archive-done --as-of 2026-10-08 | jq
+vault-tasks archive-done --vault-root "/absolute/path/to/vault" --as-of 2026-10-08 | jq
 ```
 
 Archive eligibility is deliberately simple:
